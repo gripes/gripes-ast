@@ -3,11 +3,11 @@ apply {
 	plugin 'eclipse'
 }
 
-logger.quiet "Building Gripersist"
+logger.quiet "Building Gripes AST"
 
 group = 'gripes'
-archivesBaseName = 'gripersist'
-version = '0.1.3'
+archivesBaseName = 'gripes-ast'
+version = '0.1.0'
 
 versions = [
 	'gripes-web' : '0.1.7',
@@ -48,8 +48,8 @@ dependencies {
 	}
 	
 	//** Groovy
-	groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.10'
-	compile group: 'org.codehaus.groovy', name: 'groovy', version: '1.7.10'
+	groovy group: 'org.codehaus.groovy', name: 'groovy', version: '1.8.4'
+	compile group: 'org.codehaus.groovy', name: 'groovy', version: '1.8.4'
 	
 	//** Servlet
 	provided group: 'javax.servlet', name: 'servlet-api', version: '2.5'
@@ -79,16 +79,7 @@ uploadArchives {
        flatDir(dirs: file('repos'))
     }
 }
-uploadArchives.doLast {
-	/*	
-	ant {
-		copy(todir:buildDir.canonicalPath+"/"+libsDirName) {
-	    	fileset(dir:buildDir.canonicalPath, includes:"ivy.xml")
-		}
-		delete(file: buildDir.canonicalPath+"/ivy.xml")
-    }
-    */
-    
+uploadArchives.doLast {    
 	ant {
 		taskdef(name: 'ftp',
                 classname: 'org.apache.tools.ant.taskdefs.optional.net.FTP',
@@ -96,14 +87,14 @@ uploadArchives.doLast {
 
 		ftp(action: "mkdir",
 			server: "www.gripes-project.org", 
-			remotedir: "${ftpUploadRoot}/libs/gripes/gripersist/${version}",
+			remotedir: "${ftpUploadRoot}/libs/gripes/gripes-ast/${version}",
 			chmod: "0755",
 			userid: ftpUploadUser,
 			password: ftpUploadPassword)
 			
 		ftp(action: "put",
 			server: "www.gripes-project.org", 
-			remotedir: "${ftpUploadRoot}/libs/gripes/gripersist/${version}",
+			remotedir: "${ftpUploadRoot}/libs/gripes/gripes-ast/${version}",
 			chmod: "0755",
 			userid: ftpUploadUser,
 			password: ftpUploadPassword) {

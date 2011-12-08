@@ -7,8 +7,10 @@ import javax.persistence.OneToMany
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.AnnotationNode
+import org.codehaus.groovy.ast.ClassHelper;
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.FieldNode
+import org.codehaus.groovy.ast.GenericsType
 import org.codehaus.groovy.control.CompilePhase
 import org.codehaus.groovy.control.SourceUnit
 import org.codehaus.groovy.transform.ASTTransformation
@@ -29,26 +31,32 @@ class EntityASTTransformation implements ASTTransformation {
         AnnotationNode node = (AnnotationNode) nodes[0];
 
 		def mappings = (((ClassNode) parent).getFields()).find{it.name=="mappings"}
-		def method, args
-		mappings.initialValueExpression.code.statements.each {
-			args = []
-			method = it.expression.method.value
-			it.expression.arguments.each {
-				it.expressions.each {
-					args.add it.variable
+		if(mappings) {
+			def method, args
+			mappings.initialValueExpression.code.statements.each {
+				args = []
+				method = it.expression.method.value
+				it.expression.arguments.each {
+					it.expressions.each {
+						args.add it.variable
+					}
 				}
 			}
 			
-			println "${method}(${args})"
-		}
-		
-		ClassNode parentNode = (ClassNode) parent
-		AnnotationNode oneToMany = new AnnotationNode(new ClassNode(OneToMany.class))
-		args.each {
+			ClassNode parentNode = (ClassNode) parent
+			AnnotationNode oneToMany = new AnnotationNode(new ClassNode(OneToMany.class))
+			
 			//Find the field on the parent ClassNode and attach OneToMany
-			FieldNode fn = parentNode.getField(it)
-			println "Field: " + fn.name
-			fn.addAnnotation(oneToMany)
+			args.each {
+				FieldNode fn = parentNode.getField(it)
+				
+				final ClassNode listCN = ClassHelper.LIST_TYPE.getPlainNodeReference(); 
+				listCN.setUsingGenerics(true)
+				listCN.setGenericsTypes(new GenericsType(fn.type))
+				
+				fn.setType(listCN)
+				fn.addAnnotation(oneToMany)
+			}
 		}
 		
 		AnnotationNode annotation = new AnnotationNode(new ClassNode(Entity.class))		
