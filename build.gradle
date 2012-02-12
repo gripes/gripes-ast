@@ -18,8 +18,8 @@ versions = [
 
 repositories {
     mavenCentral()
-    mavenRepo urls: "http://www.gripes-project.org/libs"
-    mavenRepo name: "jboss-snapshots", urls: "http://snapshots.jboss.org/maven2/"
+    mavenRepo url: "http://www.gripes-project.org/libs"
+    mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
 }
 
 configurations {
