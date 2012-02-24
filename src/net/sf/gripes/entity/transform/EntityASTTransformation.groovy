@@ -3,11 +3,12 @@ package net.sf.gripes.entity.transform;
 
 import javax.persistence.Entity
 import javax.persistence.OneToMany
+import javax.persistence.Transient
 
 import org.codehaus.groovy.ast.ASTNode
 import org.codehaus.groovy.ast.AnnotatedNode
 import org.codehaus.groovy.ast.AnnotationNode
-import org.codehaus.groovy.ast.ClassHelper;
+import org.codehaus.groovy.ast.ClassHelper
 import org.codehaus.groovy.ast.ClassNode
 import org.codehaus.groovy.ast.FieldNode
 import org.codehaus.groovy.ast.GenericsType
@@ -30,9 +31,13 @@ class EntityASTTransformation implements ASTTransformation {
         AnnotatedNode parent = (AnnotatedNode) nodes[1];
         AnnotationNode node = (AnnotationNode) nodes[0];
 
-		def mappings = (((ClassNode) parent).getFields()).find{it.name=="mappings"}
+		FieldNode mappings = (((ClassNode) parent).getFields()).find{it.name=="mappings"}
+
 		if(mappings) {
 			def method, args
+			AnnotationNode trans = new AnnotationNode(new ClassNode(Transient.class))
+			mappings.addAnnotation(trans)
+			
 			mappings.initialValueExpression.code.statements.each {
 				args = []
 				method = it.expression.method.value
@@ -59,7 +64,7 @@ class EntityASTTransformation implements ASTTransformation {
 			}
 		}
 		
-		AnnotationNode annotation = new AnnotationNode(new ClassNode(Entity.class))		
-		parent.addAnnotation(annotation);
+		AnnotationNode annotation = new AnnotationNode(new ClassNode(javax.persistence.Entity.class))
+		parent.addAnnotation(annotation)
 	}
 }

@@ -13,13 +13,23 @@ versions = [
 	'gripes-web' : '0.1.7',
 	'gripes-plugin' : '0.1.7',
 	'gripersist' : '0.1.1',
-	'hibernate-core' : '4.0.0.Beta2'
+	'hibernate-core' : '4.0.1.Final'
 ]
+
+
+gradle.taskGraph.whenReady {taskGraph ->
+	if (taskGraph.hasTask(':release')) {
+		version = "1.0"
+	} else {
+		version = "${version}-SNAPSHOT-"+new GregorianCalendar().timeInMillis
+	}
+	logger.quiet "Gripes-AST Version set to $version"
+}
 
 repositories {
     mavenCentral()
     mavenRepo url: "http://www.gripes-project.org/libs"
-    mavenRepo name: "jboss-snapshots", url: "http://snapshots.jboss.org/maven2/"
+    mavenRepo url: "http://snapshots.jboss.org/maven2/"
 }
 
 configurations {
@@ -63,10 +73,10 @@ dependencies {
 	runtime group: 'org.hibernate', name: 'hibernate-c3p0', version: versions['hibernate-core']
 	
 	//** Logging
-	provided group: 'org.slf4j', name: 'slf4j-api', version: '1.6.1'
-	provided group: 'ch.qos.logback', name: 'logback-core', version: '0.9.28'
-	provided group: 'ch.qos.logback', name: 'logback-access', version: '0.9.28'
-	provided group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.28'
+	compile group: 'org.slf4j', name: 'slf4j-api', version: '1.6.1'
+	compile group: 'ch.qos.logback', name: 'logback-core', version: '0.9.28'
+	compile group: 'ch.qos.logback', name: 'logback-access', version: '0.9.28'
+	compile group: 'ch.qos.logback', name: 'logback-classic', version: '0.9.28'
 	
 	//** Testing
 	testCompile 'junit:junit:4.10'

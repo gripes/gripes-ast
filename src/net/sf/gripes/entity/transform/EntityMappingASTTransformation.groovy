@@ -28,21 +28,13 @@ class EntityMappingASTTransformation implements ASTTransformation {
 			throw new RuntimeException("Internal error: wrong types: ${node.class} / ${parent.class}");
 		}
 		
-		println source.name
-		
         AnnotatedNode parent = (AnnotatedNode) nodes[1];
         AnnotationNode node = (AnnotationNode) nodes[0];
-
-		node.each{
-			println it.classNode.getProperties()
-		}
 		
         FieldNode fNode = (FieldNode) parent;
         String fName = fNode.getName();
-		println "Fname: " + fName
 		
 		parent.setDeclaringClass(new ClassNode(List.class))
-		println parent.getDeclaringClass()
 		
 		ClassNode oneToMany = new ClassNode(OneToMany.class);
 		
